@@ -1,9 +1,12 @@
 import json
 import bs4
 from bs4 import BeautifulSoup
-import requests
+
+import urllib.request
+import time
 
 def parse_single_release(s):
+    time.sleep(5)
     release = {}
     content = str(s.find_all('div', class_="content"))
     release['content'] = content.replace('<p>', '').replace('<p>', '').replace('</p>', '').replace('\n', '').replace('\\u', '')
@@ -20,7 +23,12 @@ if __name__ == '__main__':
         soup = BeautifulSoup(data)
         paths = [s['href'] for s in soup.find_all('a') if '/release/' in s['href']]
         paths = [base+p for i, p in enumerate(paths) if i%2==0]
-        releases = [BeautifulSoup(requests.get(p)) for p in paths]
+
+        releases = [BeautifulSoup(urllib.request.urlopen(p)) for p in paths]
+        if len(releases) == 0:
+            print(soup)
+            raise SystemExit
+
         parsed_releases = [parse_single_release(s) for s in releases]
         for rel in parsed_releases:
             print('writing {}'.format(rel['title']))
