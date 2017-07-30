@@ -1,7 +1,7 @@
 import json
 import bs4
 from bs4 import BeautifulSoup
-import urllib
+import requests
 
 def parse_single_release(s):
     release = {}
@@ -16,11 +16,11 @@ def parse_single_release(s):
 if __name__ == '__main__':
     for i in range(277): 
         base = 'https://www.beehive.govt.nz'
-        data = urllib.request.urlopen(base + '/releases?page={}'.format(i))
+        data = requests.get(base + '/releases?page={}'.format(i))
         soup = BeautifulSoup(data)
         paths = [s['href'] for s in soup.find_all('a') if '/release/' in s['href']]
         paths = [base+p for i, p in enumerate(paths) if i%2==0]
-        releases = [BeautifulSoup(urllib.request.urlopen(p)) for p in paths]
+        releases = [BeautifulSoup(requests.get(p)) for p in paths]
         parsed_releases = [parse_single_release(s) for s in releases]
         for rel in parsed_releases:
             print('writing {}'.format(rel['title']))
