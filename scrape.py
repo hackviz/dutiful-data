@@ -57,7 +57,17 @@ def scrape_fyi(url):
                         break #quick hack so we only look at first piece of correspondence
 
                     if len(towrite) != 0:
-                        csvwriter.writerow(towrite)
+                        nl = []
+                        nl.append(towrite[0])
+
+                        print(towrite) #keep track of progress :)
+
+                        nl.append(new_link)
+
+
+
+                        csvwriter.writerow(nl)
+
 
 
 
